@@ -12,7 +12,7 @@ class CocoPredictor:
         weight_file = "./yolov2_darknet.model"
         self.n_classes = 80
         self.n_boxes = 5
-        self.detection_thresh = 0.5
+        self.detection_thresh = 0.2
         self.iou_thresh = 0.5
         self.labels = ["person","bicycle","car","motorcycle","airplane","bus","train","truck","boat","traffic light","fire hydrant","stop sign","parking meter","bench","bird","cat","dog","horse","sheep","cow","elephant","bear","zebra","giraffe","backpack","umbrella","handbag","tie","suitcase","frisbee","skis","snowboard","sports ball","kite","baseball bat","baseball glove","skateboard","surfboard","tennis racket","bottle","wine glass","cup","fork","knife","spoon","bowl","banana","apple","sandwich","orange","broccoli","carrot","hot dog","pizza","donut","cake","chair","couch","potted plant","bed","dining table","toilet","tv","laptop","mouse","remote","keyboard","cell phone","microwave","oven","toaster","sink","refrigerator","book","clock","vase","scissors","teddy bear","hair drier","toothbrush"]
         anchors = [[0.738768, 0.874946], [2.42204, 2.65704], [4.30971, 7.04493], [10.246, 4.59428], [12.6868, 11.8741]]
@@ -92,13 +92,15 @@ if __name__ == "__main__":
             orig_img,
             result["box"].int_left_top(), result["box"].int_right_bottom(),
             (0, 255, 0),
-            5
+            3
         )
+# 画像サイズの短辺に合わせてクロッピング。
+# 矩形戦略はpixivの戦略と一緒
         text = '%s(%2d%%)' % (result["label"], result["probs"].max()*result["conf"]*100)
-        cv2.putText(orig_img, text, (left, top-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        cv2.putText(orig_img, text, (left, top-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
         print(text)
 
-    print("save results to yolov2_result.jpg")
-    cv2.imwrite("yolov2_result.jpg", orig_img)
-    cv2.imshow("w", orig_img)
-    cv2.waitKey()
+    print("save results to " + image_file + "_predicted_by_yolov2.jpg")
+    cv2.imwrite(image_file + "_predicted_by_yolov2.jpg", orig_img)
+#    cv2.imshow("w", orig_img)
+#    cv2.waitKey()
